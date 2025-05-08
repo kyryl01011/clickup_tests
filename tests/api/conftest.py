@@ -2,8 +2,6 @@ import requests
 import pytest
 
 from api.api_manager import ApiManager
-from api.tasks_api import TasksApi
-from custom_requester.custom_requester import CustomRequester
 from enums.consts import BASE_HEADERS
 from utils.data_generator import DataGenerator
 
@@ -26,7 +24,7 @@ def task_data(authed_session):
 
     yield _generate_task_data
 
-    all_tasks_list = authed_session.tasks_api.get_all_tasks()['tasks']
+    all_tasks_list = authed_session.tasks_api.get_all_tasks().json()['tasks']
     for task_name in created_tasks:
         for task in all_tasks_list:
             if task['name'] == task_name:
