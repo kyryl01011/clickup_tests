@@ -21,12 +21,12 @@ def browser():
 #@allure.step('Create fresh page for tests')
 def page(browser):
     page = browser.new_page()
-    yield(page)
+    yield page
     page.close()
 
 @pytest.fixture
 #@allure.step('Create logged-in page object')
-def logged_in_page(page: Page):
+def logged_in_page(page):
     login_page = LoginPage(page)
     login_page.login(CLICKUP_EMAIL, CLICKUP_PASSWORD)
     return page

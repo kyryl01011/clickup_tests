@@ -20,10 +20,10 @@ class BasePage:
     def _get_page_url(self, endpoint):
         self._endpoint = endpoint
 
-    @property
-    def _get_alltasks_table_url(self):
-        with allure.step(f'Generate all-tasks table URL'):
-            return f'{self.__base_url}/{CLICKUP_TEAM_ID}/v/b/t/{CLICKUP_TEAM_ID}'
+    # @property
+    # def _get_all_tasks_table_url(self):
+    #     with allure.step(f'Generate all-tasks table URL'):
+    #         return f'{self.__base_url}/{CLICKUP_TEAM_ID}/v/b/t/{CLICKUP_TEAM_ID}'
 
     def navigate_and_wait_url(self, url):
         with allure.step(f'Load URL - {url}'):
