@@ -1,3 +1,5 @@
+import time
+
 import allure
 from pages.base_page import BasePage
 
@@ -9,7 +11,7 @@ class LoginPage(BasePage):
     LOGIN_BUTTON_SELECTOR = 'button >> span:has-text("Log In")'
     DROPDOWN_USER_MENU_SELECTOR = 'cu3-icon >> svg >> use'
     ERROR_MESSAGE_SELECTOR = 'span[data-test="form__error"]'
-    CAPTCHA_SELECTOR = 're-captcha[data-action="login"] iframe[title="reCAPTCHA"]'
+    CAPTCHA_SELECTOR = 're-captcha[data-test="login"]'
 
     def __init__(self, page):
         super().__init__(page)
@@ -21,7 +23,12 @@ class LoginPage(BasePage):
         self.wait_selector_and_fill(self.EMAIL_INPUT_SELECTOR, email)
         self.wait_selector_and_type(self.PASSWORD_INPUT_SELECTOR, password)
         self.click_button(self.LOGIN_BUTTON_SELECTOR)
-        # self.page.pause()
+        try:
+            self.wait_element_appear(self.CAPTCHA_SELECTOR)
+        except TimeoutError:
+            pass
+        if self.assert_element_exists_on_page(self.CAPTCHA_SELECTOR):
+            self.page.pause()  # in case captcha appear to solve manually
         if test_type == 'positive':
             self.wait_element_appear(self.DROPDOWN_USER_MENU_SELECTOR)
         else:

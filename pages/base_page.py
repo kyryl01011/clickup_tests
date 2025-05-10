@@ -65,7 +65,7 @@ class BasePage:
         expect(self.page.locator(selector)).to_contain_text(text)
 
     def amount_of_elements(self, selector):
-        with allure.step(f'Get amout of elements with selector {selector}'):
+        with allure.step(f'Get amount of elements with selector {selector}'):
             return self.page.locator(selector).count()
 
     def assert_text_exists_on_page(self, text):
@@ -77,6 +77,6 @@ class BasePage:
             expect(self.page.locator(selector))
 
     def assert_element_is_visible(self, selector):
-        with allure.step(f'Check if elemenet {selector} is visible'):
+        with allure.step(f'Check if element {selector} is visible'):
             self.page.is_visible(selector)
             
