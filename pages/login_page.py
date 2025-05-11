@@ -1,6 +1,6 @@
 import allure
 from pages.base_page import BasePage
-
+from playwright.sync_api import TimeoutError as PWTimeoutError
 
 @allure.feature('Base UI login page actions')
 class LoginPage(BasePage):
@@ -9,7 +9,7 @@ class LoginPage(BasePage):
     LOGIN_BUTTON_SELECTOR = 'button >> span:has-text("Log In")'
     DROPDOWN_USER_MENU_SELECTOR = 'cu3-icon >> svg >> use'
     ERROR_MESSAGE_SELECTOR = 'span[data-test="form__error"]'
-    CAPTCHA_SELECTOR = 're-captcha[data-test="login"]'
+    CAPTCHA_SELECTOR = 'div.login-page-new__main-form-recaptcha-inner'
 
     def __init__(self, page):
         super().__init__(page)
@@ -22,11 +22,12 @@ class LoginPage(BasePage):
         self.wait_selector_and_type(self.PASSWORD_INPUT_SELECTOR, password)
         self.click_button(self.LOGIN_BUTTON_SELECTOR)
         try:
-            self.wait_element_appear(self.CAPTCHA_SELECTOR)
-        except TimeoutError:
+            self.wait_element_appear(self.CAPTCHA_SELECTOR, timeout=5555)
+        except PWTimeoutError:
             pass
-        if self.assert_element_exists_on_page(self.CAPTCHA_SELECTOR):
-            self.page.pause()  # in case captcha appear to solve manually
+        # in case captcha appear to solve manually
+        if self.page.locator(self.CAPTCHA_SELECTOR).is_visible():
+            self.page.pause()
         if test_type == 'positive':
             self.wait_element_appear(self.DROPDOWN_USER_MENU_SELECTOR)
         else:

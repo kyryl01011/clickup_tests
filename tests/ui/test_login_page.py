@@ -2,7 +2,6 @@ import allure
 from utils.helpers import CLICKUP_EMAIL, CLICKUP_PASSWORD
 from pages.login_page import LoginPage
 
-
 class TestLoginUI:
 
     @allure.description('Successfully login with creds')

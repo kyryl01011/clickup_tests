@@ -9,7 +9,6 @@ def get_env_variable(name):
         raise ValueError(f"Environment variable '{name}' is not set")
     return value
 
-
 CLICKUP_API_KEY = get_env_variable("CLICKUP_API_KEY")
 CLICKUP_EMAIL = get_env_variable("CLICKUP_EMAIL")
 CLICKUP_PASSWORD= get_env_variable("CLICKUP_PASSWORD")

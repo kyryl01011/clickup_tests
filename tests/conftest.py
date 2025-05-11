@@ -9,8 +9,7 @@ from pages.login_page import LoginPage
 from utils.data_generator import DataGenerator
 from utils.helpers import CLICKUP_EMAIL, CLICKUP_PASSWORD
 
-
-################# API FIXTURES
+# API FIXTURES
 
 @pytest.fixture(scope='session')
 @allure.title('Create authorized session')
@@ -52,11 +51,10 @@ def created_task(authed_session,task_data):
         return created_task_response
     return _create_task
 
-############## UI FIXTURES
+# UI FIXTURES
 
-
-@pytest.fixture(scope='session')
 @allure.title('Initialize playwright and browser, stop after tests done')
+@pytest.fixture(scope='session')
 def browser():
     playwright = sync_playwright().start()
     browser = playwright.chromium.launch(headless=False, slow_mo=300)
@@ -64,16 +62,15 @@ def browser():
     browser.close()
     playwright.stop()
 
-@pytest.fixture
 @allure.title('Create fresh page for tests')
+@pytest.fixture
 def page(browser):
     page = browser.new_page()
     yield page
     page.close()
 
-
-@pytest.fixture
 @allure.title('Create logged-in page object')
+@pytest.fixture
 def logged_in_page(page):
     login_page = LoginPage(page)
     login_page.login(CLICKUP_EMAIL, CLICKUP_PASSWORD)
