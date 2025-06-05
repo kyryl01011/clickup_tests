@@ -1,5 +1,5 @@
 import allure
-from pages.board_page import BoardPage
+from src.pages.board_page import BoardPage
 
 class TestTasksUI:
 

@@ -1,7 +1,7 @@
 import allure
 from playwright.sync_api import Page, expect
-from actions.page_actions import PageActions
-from utils.helpers import CLICKUP_TEAM_ID
+from src.actions.page_actions import PageActions
+
 
 @allure.feature('Base UI actions')
 class BasePage:

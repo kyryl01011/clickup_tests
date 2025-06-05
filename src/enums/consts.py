@@ -1,4 +1,4 @@
-from utils.helpers import CLICKUP_API_KEY
+from src.utils.helpers import CLICKUP_API_KEY
 
 BASE_HEADERS = {
     'Accept': 'application/json',

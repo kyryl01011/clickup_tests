@@ -1,5 +1,5 @@
 import allure
-from pages.base_page import BasePage
+from src.pages.base_page import BasePage
 from playwright.sync_api import TimeoutError as PWTimeoutError
 
 @allure.feature('Base UI login page actions')

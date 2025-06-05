@@ -1,8 +1,8 @@
 import time
 
 import allure
-from pages.base_page import BasePage
-from utils.helpers import CLICKUP_TEAM_ID
+from src.pages.base_page import BasePage
+from src.utils.helpers import CLICKUP_TEAM_ID
 
 
 class BoardTasksTableFragment(BasePage):

@@ -1,6 +1,6 @@
 from requests import Session
 
-from api.tasks_api import TasksApi
+from src.api.tasks_client_api import TasksApi
 
 
 class ApiManager:
