@@ -13,14 +13,6 @@ class TestTasks:
         generated_task_data = task_data()
         tasks_scenarios.create_task(generated_task_data)
 
-    @allure.description('Personal setup, get all existing tasks and delete them one by one using ID')
-    def test_delete_all_tasks(self, authed_session):
-        all_tasks = self.test_get_all_tasks(authed_session)
-        for task in all_tasks:
-            authed_session.tasks_api.delete_task(task['id'])
-        second_check = self.test_get_all_tasks(authed_session)
-        assert len(second_check) == 0, f'Tasks list is not empty: {len(second_check)} elements exists, {second_check}'
-
     @allure.description('Get all existing tasks')
     def test_get_all_tasks(self, authed_session):
         all_tasks = authed_session.tasks_api.get_all_tasks()
@@ -30,14 +22,10 @@ class TestTasks:
         return all_tasks.json()['tasks']
 
     @allure.description('Generates new task and check if task with such data exists using ID')
-    def test_get_task(self, authed_session, task_data):
-        init_task_data = self.test_successful_create_new_task(authed_session, task_data)
-        task = authed_session.tasks_api.get_task(init_task_data['id'])
-        task_json = task.json()
-        assert init_task_data['id'] == task_json[
-            'id'], f'Unexpected task id: {task_json['id']}, expected {init_task_data['id']}'
-        assert init_task_data['name'] == task_json[
-            'name'], f'Unexpected task name: {task_json['name']}, expected {init_task_data['name']}'
+    def test_get_task(self, tasks_scenarios, task_data):
+        generated_task_data = task_data()
+        created_task_model = tasks_scenarios.create_task(generated_task_data)
+        tasks_scenarios.get_task_by_id(created_task_model.id)
 
     @allure.description('Generates random ID and check if error message and code equals to expected')
     @pytest.mark.parametrize(
@@ -46,26 +34,17 @@ class TestTasks:
             (('Team not authorized', 'Team(s) not authorized'), ('OAUTH_023', 'OAUTH_027'))
         ]
     )
-    def test_negative_get_task(self, authed_session, task_data, expected_err_message, expected_err_code):
-        task_id = DataGenerator.generate_random_int()
-        task = authed_session.tasks_api.get_task(task_id, expected_status_code=401)
-        task_json = task.json()
-        assert task_json['err'] in expected_err_message, f'Unexpected error message: {task_json['err']}'
-        assert task_json['ECODE'] in expected_err_code, f'Unexpected error code: {task_json['ECODE']}'
+    def test_negative_get_task(self, tasks_scenarios, task_data, expected_err_message, expected_err_code):
+        random_id = DataGenerator.generate_random_int()
+        tasks_scenarios.negative_get_task_by_id(
+            random_id,
+            expected_error_msg=expected_err_message,
+            expected_error_code=expected_err_code)
 
     @allure.description('Generates random task data and create task with it, verify if data matches')
-    def test_successful_create_new_task(self, authed_session, task_data):
+    def test_successful_create_new_task(self, tasks_scenarios, task_data):
         generated_task_data = task_data()
-        with allure.step(f'Create new task with data: {generated_task_data}'):
-            created_task = authed_session.tasks_api.create_new_task(generated_task_data)
-            created_task_json = created_task.json()
-        with allure.step(f'Verify created task with ID: {created_task_json['id']} exists'):
-            verify_response_json = authed_session.tasks_api.get_task(created_task_json['id']).json()
-        assert verify_response_json['name'] == generated_task_data[
-            'name'], f'Unexpected task name: {verify_response_json['name']}, expected {generated_task_data['name']}'
-        assert created_task_json['name'] == generated_task_data[
-            'name'], f'Unexpected task name: {created_task_json['name']}, expected {generated_task_data['name']}'
-        return created_task_json
+        tasks_scenarios.create_task(generated_task_data)
 
     @allure.description(
         'Create task with wrong name, parent ID, link ID and validate that errors are equal to expected')

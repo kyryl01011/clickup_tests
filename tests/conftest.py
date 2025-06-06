@@ -3,6 +3,7 @@ import pytest
 import requests
 
 from src.api.api_manager import ApiManager
+from src.data_models.tasks import CreatedTaskModel
 from src.enums.consts import BASE_HEADERS
 from src.scenarios.tasks import TasksScenarios
 from src.utils.data_generator import DataGenerator
@@ -50,10 +51,6 @@ def task_data(tasks_scenarios):
 
     yield _generate_task_data
 
-    # all_tasks_list = authed_session.tasks_api.get_all_tasks().json()['tasks']
-    # allure.attach(str(all_tasks_list), name='Tasks to remove', attachment_type=allure.attachment_type.JSON)
-    # for task_name in created_tasks:
-    #     for task in all_tasks_list:
-    #         if task['name'] == task_name:
-    #             authed_session.tasks_api.delete_task(task['id'])
-    #             allure.attach(str(task['id']), name='ID of removed task', attachment_type=allure.attachment_type.JSON)
+    # Teardown / Delete all existing initialized tasks by ids
+    for task_id in CreatedTaskModel.created_tasks_set:
+        tasks_scenarios.delete_task_by_id(task_id)
