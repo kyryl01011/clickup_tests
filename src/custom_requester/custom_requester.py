@@ -17,7 +17,7 @@ class CustomRequester:
 
     def send_request(self, method, endpoint, json=None, data=None):
         with allure.step(f'Send {method} request to {self._get_url(endpoint)} with json={json} and data={data}'):
-            if json:
+            if isinstance(json, BaseModel):
                 json = json.model_dump()
             url = self._get_url(endpoint)
             response = self.session.request(method, url, json=json, data=data)

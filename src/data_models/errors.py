@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class AuthErrorModel(BaseModel):
+class BasicErrorModel(BaseModel):
     err: str
     ECODE: str

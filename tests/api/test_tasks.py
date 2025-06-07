@@ -1,6 +1,7 @@
 import allure
 import pytest
 
+from src.data_models.errors import BasicErrorModel
 from tests.conftest import task_data
 from src.utils.data_generator import DataGenerator
 
@@ -58,35 +59,45 @@ class TestTasks:
              'You do not have access to this task', 'ACCESS_083')
         ]
     )
-    def test_negative_create_new_task(self, authed_session, invalid_data, expected_status_code, expected_err_message,
+    def test_negative_create_new_task(self, tasks_scenarios, task_data, invalid_data, expected_status_code,
+                                      expected_err_message,
                                       expected_err_code):
-        created_task = authed_session.tasks_api.create_new_task(invalid_data, expected_status_code)
-        created_task_json = created_task.json()
-        assert created_task_json['err'] == expected_err_message, f'Unexpected error message: {created_task_json['err']}'
-        assert created_task_json['ECODE'] == expected_err_code, f'Unexpected error code: {created_task_json['ECODE']}'
+        generate_data_model = task_data()
+        generate_data_model.model_copy(update=invalid_data, deep=True)
+        tasks_scenarios.negative_create_task(
+            invalid_data,
+            expected_status_code,
+            expected_err_message,
+            expected_err_code)
 
     @allure.description(
-        'Create new task with generated data, updates it and validate if not equal to initial and equal to newly generated')
-    def test_successful_update_task(self, authed_session, task_data):
-        initial_task_data = self.test_successful_create_new_task(authed_session, task_data)
+        'Create new task with generated data, '
+        'updates it and validate if not equal to initial and equal to newly generated')
+    def test_successful_update_task(self, tasks_scenarios, task_data):
+        init_task_model = task_data()
         new_task_data = task_data()
-        updated_task_json = authed_session.tasks_api.update_task(initial_task_data['id'], new_task_data).json()
-        assert new_task_data['name'] == updated_task_json[
-            'name'], f'Unexpected updated name: {updated_task_json['name']}, expected {new_task_data['name']}'
-        assert initial_task_data['name'] != updated_task_json[
-            'name'], f'Initial data did not change: expected {new_task_data['name']}, got {updated_task_json['name']}'
+        tasks_scenarios.create_and_update_task(init_task_model, new_task_data)
 
     @allure.description(
-        'Generates random task ID and to access it with update request, validate to receive expected error message and code')
-    def test_negative_update_task(self, authed_session, task_data):
-        task_id = DataGenerator.generate_random_int()
-        new_task_data = None
-        updated_task = authed_session.tasks_api.update_task(task_id, new_task_data, 401)
-        updated_task_json = updated_task.json()
-        assert updated_task_json['err'] in ('Team not authorized',
-                                            'Team(s) not authorized'), f'Unexpected error message: {updated_task_json['err']}'
-        assert updated_task_json['ECODE'] in ('OAUTH_023',
-                                              'OAUTH_027'), f'Unexpected error code: {updated_task_json['ECODE']}'
+        'Generates random task ID and to access it with update request, '
+        'validate to receive expected error message and code')
+    @pytest.mark.parametrize(
+        'invalid_data, expected_status_code, expected_err_message, expected_err_code',
+        [
+            ({'name': ''}, 401, 'Team not authorized', 'OAUTH_027'),
+            ({'name': DataGenerator.generate_random_word(), "parent": DataGenerator.generate_random_int()}, 401,
+             'Team not authorized', 'OAUTH_027'),
+            ({'name': DataGenerator.generate_random_word(), "links_to": DataGenerator.generate_random_int()}, 401,
+             'Team not authorized', 'OAUTH_027')
+        ]
+    )
+    def test_negative_update_task(self, tasks_scenarios, task_data, invalid_data, expected_status_code,
+                                  expected_err_message, expected_err_code):
+        init_task_model = task_data()
+        new_task_model = task_data()
+        invalid_data_model = new_task_model.model_copy(update=invalid_data, deep=True)
+        error_model = BasicErrorModel(err=expected_err_message, ECODE=expected_err_code)
+        tasks_scenarios.negative_update_task(init_task_model, invalid_data_model, expected_status_code, error_model)
 
     @allure.description(
         'Create new task with generated data and delete it by ID, validate status code and that response body is empty')
