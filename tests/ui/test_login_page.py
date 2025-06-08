@@ -1,6 +1,8 @@
 import allure
-from src.utils.helpers import CLICKUP_EMAIL, CLICKUP_PASSWORD
+
 from src.pages.login_page import LoginPage
+from src.utils.helpers import CLICKUP_EMAIL, CLICKUP_PASSWORD
+
 
 class TestLoginUI:
 

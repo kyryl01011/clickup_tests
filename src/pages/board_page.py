@@ -1,16 +1,14 @@
 import time
 
 import allure
+
 from src.pages.base_page import BasePage
 from src.utils.helpers import CLICKUP_TEAM_ID
 
 
 class BoardTasksTableFragment(BasePage):
-    def __init__(self, page):
-        super().__init__(page)
-
-    BOARD_SELECTOR = 'ul.board-division__group-list' # selector of general board that contains board groups in it
-    BOARD_GROUP_SELECTOR = 'div.board-group' # for example 'to-do' or 'completed' list is board group
+    BOARD_SELECTOR = 'ul.board-division__group-list'  # selector of general board that contains board groups in it
+    BOARD_GROUP_SELECTOR = 'div.board-group'  # for example 'to-do' or 'completed' list is board group
     TASKS_SELECTOR = f'{BOARD_SELECTOR} >> {BOARD_GROUP_SELECTOR} >> li[data-source="task"]'
     DELETE_TASK_BUTTON_SELECTOR = 'a[data-test="quick-actions-menu__delete-task"]'
     ASSIGN_ICON_IN_TASK_SELECTOR = f'{TASKS_SELECTOR} >> cu-board-task-field-layout'
@@ -48,7 +46,6 @@ class BoardTasksTableFragment(BasePage):
 @allure.feature('UI Board page actions')
 class BoardPage(BasePage):
 
-
     def __init__(self, page):
         super().__init__(page)
         self._endpoint = f'/{CLICKUP_TEAM_ID}/v/b/t/{CLICKUP_TEAM_ID}'
@@ -57,4 +54,3 @@ class BoardPage(BasePage):
     @allure.description('Open Board page')
     def open_board_page(self):
         self.navigate_and_wait_url(self._get_page_url)
-

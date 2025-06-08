@@ -1,5 +1,6 @@
 import allure
 from playwright.sync_api import Page, expect
+
 from src.actions.page_actions import PageActions
 
 
@@ -15,7 +16,7 @@ class BasePage:
     @property
     def _get_page_url(self):
         return self.__base_url + self._endpoint
-    
+
     @_get_page_url.setter
     def _get_page_url(self, endpoint):
         self._endpoint = endpoint
@@ -46,7 +47,7 @@ class BasePage:
     def wait_element_to_disappear(self, selector):
         with allure.step(f'Wait element "{selector}" to disappear'):
             self.page.wait_for_selector(selector, state='hidden')
-        
+
     def wait_selector_and_fill(self, selector, text):
         with allure.step(f'Fill {selector} with "{text}"'):
             self.page.wait_for_selector(selector)
@@ -79,4 +80,3 @@ class BasePage:
     def assert_element_is_visible(self, selector):
         with allure.step(f'Check if element {selector} is visible'):
             self.page.is_visible(selector)
-            
