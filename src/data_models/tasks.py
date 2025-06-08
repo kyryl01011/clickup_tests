@@ -31,5 +31,8 @@ class CreatedTaskModel(BaseModel):
     def model_post_init(self, context: Any, /) -> None:
         self.created_tasks_set.add(self.id)
 
+
 class CreationTaskModel(BaseModel):
     name: str
+    parent: str | None = None
+    links_to: str | None = None

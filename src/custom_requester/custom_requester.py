@@ -21,12 +21,4 @@ class CustomRequester:
                 json = json.model_dump()
             url = self._get_url(endpoint)
             response = self.session.request(method, url, json=json, data=data)
-
-            print(f'''\n\nREQUEST
-{response.request.url}
-{response.request.method}
-RESPONSE
-{response.status_code}
-{response.text}''')
-
             return response

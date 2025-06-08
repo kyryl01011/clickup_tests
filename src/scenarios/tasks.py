@@ -21,11 +21,9 @@ class TasksScenarios:
              f'Created: {created_model.name}')
         return create_task_response_model
 
-    def negative_create_task(self, task_data_model, expected_status_code, expected_err_message, expected_err_code):
+    def create_task_negative(self, task_data_model, expected_status_code, error_model):
         response = self.api_manager.tasks_api.create_new_task(task_data_model)
-        response_model = validate_response(response, BasicErrorModel, expected_status_code)
-        assert response_model.err == expected_err_message, f'Unexpected error message: {response_model.err}'
-        assert response_model.ECODE == expected_err_code, f'Unexpected error code: {response_model.ECODE}'
+        validate_response(response, BasicErrorModel, expected_status_code, error_model)
 
     def get_task_by_id(self, task_id: str) -> CreatedTaskModel:
         get_task_response = self.api_manager.tasks_api.get_task(task_id)
@@ -36,53 +34,51 @@ class TasksScenarios:
              f'Response: {get_task_response_model.id}')
         return get_task_response_model
 
-    def negative_get_task_by_id(
+    def get_task_by_id_negative(
             self,
             task_id: str,
-            expected_error_msg: set,
-            expected_error_code: set,
-            expected_status_code=401
+            expected_status_code: int,
+            err_model
     ):
         response = self.api_manager.tasks_api.get_task(task_id)
-        response_model: BasicErrorModel = validate_response(response, BasicErrorModel, expected_status_code)
-        assert response_model.err in expected_error_msg, \
-            (f'Unexpected error message: {response_model.err}'
-             f'Expected: {expected_error_msg}')
-        assert response_model.ECODE in expected_error_code, \
-            (f'Unexpected error ECODE: {response_model.ECODE}'
-             f'Expected: {expected_error_code}')
+        validate_response(response, BasicErrorModel, expected_status_code, err_model)
 
     def delete_task_by_id(self, task_id: str):
         delete_task_response = self.api_manager.tasks_api.delete_task(task_id)
-        assert delete_task_response.status_code == 204, \
-            (f'Unexpected status code: {delete_task_response.status_code}'
-             f'Expected: 204')
-        assert delete_task_response.text == '', f'Unexpected response body: {delete_task_response.text}'
+        validate_response(delete_task_response, expected_status_code=204)
         check_existence_response = self.api_manager.tasks_api.get_task(task_id)
-        assert check_existence_response.status_code == 404, \
-            (f'Unexpected status code: '
-             f'Expected: 404'
-             f'Got: {check_existence_response.status_code}')
+        validate_response(check_existence_response, BasicErrorModel, 404)
+
+    def delete_task_by_invalid_id(self, fake_id: str):
+        response = self.api_manager.tasks_api.delete_task(fake_id)
+        expected_err_model = BasicErrorModel(err='Team not authorized', ECODE='OAUTH_027')
+        validate_response(response, BasicErrorModel, 401, expected_err_model)
+
+    def create_and_delete_task(self, task_data_model):
+        created_task_model = self.create_task(task_data_model)
+        self.delete_task_by_id(created_task_model.id)
 
     def update_task(self, task_id: str, new_task_model: CreationTaskModel):
         response = self.api_manager.tasks_api.update_task(task_id, new_task_model)
         validate_response(response, CreatedTaskModel, expected_data=new_task_model)
 
-    def negative_update_task(
+    def update_task_negative(
             self,
             task_id: str,
-            new_task_model: CreationTaskModel,
-            expected_status_code: int,
-            expected_error_model: BasicErrorModel
+            new_task_model: CreationTaskModel | None = None,
+            expected_status_code: int = 400,
+            expected_error_model: BasicErrorModel | None = None
     ):
         response = self.api_manager.tasks_api.update_task(task_id, new_task_model)
-        validate_response(response, BasicErrorModel, expected_status_code, expected_error_model)
+        if expected_error_model is not None:
+            validate_response(response, BasicErrorModel, expected_status_code, expected_error_model)
+        else:
+            validate_response(response, expected_status_code=expected_status_code)
 
-    def create_and_negative_update_task(self, init_task_model: CreationTaskModel,
+    def create_and_update_task_negative(self, init_task_model: CreationTaskModel,
                                         new_task_model, expected_status_code, expected_error_model):
         created_task_model = self.create_task(init_task_model)
-        self.negative_update_task(created_task_model.id, new_task_model, expected_status_code, expected_error_model)
-
+        self.update_task_negative(created_task_model.id, new_task_model, expected_status_code, expected_error_model)
 
     def create_and_update_task(self, init_task_model: CreationTaskModel, new_task_model: CreationTaskModel):
         init_task = self.create_task(init_task_model)
