@@ -1,8 +1,6 @@
 import allure
 from playwright.sync_api import Page, expect
 
-from src.actions.page_actions import PageActions
-
 
 @allure.feature('Base UI actions')
 class BasePage:
@@ -11,7 +9,6 @@ class BasePage:
         self.page = page
         self.__base_url = 'https://app.clickup.com'
         self._endpoint = ''
-        self.actions = PageActions(page)
 
     @property
     def _get_page_url(self):

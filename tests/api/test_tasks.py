@@ -8,6 +8,7 @@ from tests.conftest import task_data
 
 @allure.title('Manage tasks API')
 @allure.feature('Manage tasks')
+@pytest.mark.api
 class TestTasks:
 
     @allure.description('Generates new task and check if task with such data exists using ID')

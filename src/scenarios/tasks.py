@@ -51,7 +51,7 @@ class TasksScenarios:
 
     def delete_task_by_invalid_id(self, fake_id: str):
         response = self.api_manager.tasks_api.delete_task(fake_id)
-        expected_err_model = BasicErrorModel(err='Team not authorized', ECODE='OAUTH_027')
+        expected_err_model = BasicErrorModel(err=('Team not authorized', 'Team(s) not authorized'), ECODE='OAUTH_027')
         validate_response(response, BasicErrorModel, 401, expected_err_model)
 
     def create_and_delete_task(self, task_data_model):

@@ -24,8 +24,7 @@ class TasksApi(CustomRequester):
             return response
 
     def update_task(self, task_id, body_json) -> Response:
-        with allure.step(
-                f'Update task by ID {task_id} with new data {body_json}'):
+        with allure.step(f'Update task by ID {task_id} with new data {body_json}'):
             response = self.send_request('PUT', f'/task/{task_id}', json=body_json)
             return response
 
