@@ -1,6 +1,7 @@
 import time
 
 import allure
+from playwright.sync_api import expect
 
 from src.pages.base_page import BasePage
 from src.utils.helpers import CLICKUP_TEAM_ID
@@ -15,6 +16,7 @@ class BoardTasksTableFragment(BasePage):
     NEW_TASK_BUTTON_SELECTOR = 'button[data-test="board-group__create-task-button__Add Task"]'
     NEW_TASK_TITLE_INPUT_SELECTOR = 'input[data-test="quick-create-task-panel__panel-board__input"]'
     CONFIRM_NEW_TASK_CREATION_SELECTOR = 'button[data-test="quick-create-task-panel__panel-board__enter-button"]'
+    TASK_REMOVAL_CONFIRMATION_SELECTOR = '[data-test=\"undo-toast-items__toast-undo\"]'
 
     @allure.description('Wait tasks to load')
     def wait_tasks_load(self):
@@ -36,11 +38,9 @@ class BoardTasksTableFragment(BasePage):
         self.wait_element_appear(new_task_selector)
 
     @allure.description('Remove existing task from board page')
-    def remove_task_with_options_menu_and_verify(self):
-        amount_of_tasks = self.amount_of_elements(self.TASKS_SELECTOR)
+    def remove_task_with_options(self):
         self.click_button(self.DELETE_TASK_BUTTON_SELECTOR)
-        time.sleep(3)
-        assert amount_of_tasks - 1 == self.amount_of_elements(self.TASKS_SELECTOR)
+        self.wait_element_appear(self.TASK_REMOVAL_CONFIRMATION_SELECTOR)
 
 
 @allure.feature('UI Board page actions')

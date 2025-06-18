@@ -15,10 +15,11 @@ class TestTasksUI:
         board_page.board_tasks_table.create_new_task_in_todo_list(random_task_title)
 
     @allure.description('Remove newly created task')
-    def test_remove_existing_task(self, logged_in_page, created_task):
-        created_task()
+    def test_remove_existing_task(self, logged_in_page, tasks_scenarios, task_data):
+        generated_data = task_data()
+        tasks_scenarios.create_task(generated_data)
         board_page = BoardPage(logged_in_page)
         board_page.open_board_page()
         board_page.board_tasks_table.wait_tasks_load()
         board_page.board_tasks_table.open_task_options()
-        board_page.board_tasks_table.remove_task_with_options_menu_and_verify()
+        board_page.board_tasks_table.remove_task_with_options()

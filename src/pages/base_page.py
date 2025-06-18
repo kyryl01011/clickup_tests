@@ -18,6 +18,10 @@ class BasePage:
     def _get_page_url(self, endpoint):
         self._endpoint = endpoint
 
+    def get_by_locator(self, selector):
+        with allure.step(f'Get element with selector "{selector}" by locator'):
+            return self.page.locator(selector)
+
     def navigate_and_wait_url(self, url):
         with allure.step(f'Load URL - {url}'):
             self.page.goto(url, timeout=60000)

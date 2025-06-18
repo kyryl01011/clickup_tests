@@ -1,5 +1,6 @@
 from typing import ClassVar, Any
 
+import allure
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -29,6 +30,7 @@ class CreatedTaskModel(BaseModel):
     creator: CreatorModel
 
     def model_post_init(self, context: Any, /) -> None:
+        allure.attach(str(self.model_dump()), name='Created task data', attachment_type=allure.attachment_type.JSON)
         self.created_tasks_set.add(self.id)
 
 
