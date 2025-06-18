@@ -36,9 +36,8 @@ def tasks_scenarios(api_manager):
 
 
 @allure.title('Generate task data')
-@pytest.fixture()
+@pytest.fixture
 def task_data(tasks_scenarios):
-    created_tasks = []
 
     def _generate_task_data():
         generated_task_data = DataGenerator.generate_task_data()
@@ -46,7 +45,6 @@ def task_data(tasks_scenarios):
             str(generated_task_data.model_dump()),
             name='Generated data',
             attachment_type=allure.attachment_type.JSON)
-        created_tasks.append(generated_task_data.name)
         return generated_task_data
 
     yield _generate_task_data
