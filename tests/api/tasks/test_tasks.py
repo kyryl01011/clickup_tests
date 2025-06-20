@@ -11,12 +11,14 @@ from tests.conftest import task_data
 @pytest.mark.api
 class TestTasks:
 
+    @allure.title('Fetch existing task info with positive data')
     @allure.description('Generates new task and check if task with such data exists using ID')
     def test_get_task(self, tasks_scenarios, task_data):
         generated_task_data = task_data()
         created_task_model = tasks_scenarios.create_task(generated_task_data)
         tasks_scenarios.get_task_by_id(created_task_model.id)
 
+    @allure.title('Fetch existing task info with negative data')
     @allure.description('Generates random ID and check if error message and code equals to expected')
     @pytest.mark.parametrize(
         'expected_status_code, expected_err_message, expected_err_code',
@@ -30,11 +32,13 @@ class TestTasks:
         err_model = BasicErrorModel(err=expected_err_message, ECODE=expected_err_code)
         tasks_scenarios.get_task_by_id_negative(random_id, expected_status_code, err_model)
 
+    @allure.title('Positive create new task')
     @allure.description('Generates random task data and create task with it, verify if data matches')
     def test_successful_create_new_task(self, tasks_scenarios, task_data):
         generated_task_data = task_data()
         tasks_scenarios.create_task(generated_task_data)
 
+    @allure.title('Create new task with negative data')
     @allure.description(
         'Create task with wrong name, parent ID, link ID and validate that errors are equal to expected')
     @pytest.mark.parametrize(
@@ -58,6 +62,7 @@ class TestTasks:
             err_model
         )
 
+    @allure.title('Update full task with positive data')
     @allure.description(
         'Create new task with generated data, '
         'updates it and validate if not equal to initial and equal to newly generated')
@@ -66,6 +71,7 @@ class TestTasks:
         new_task_data = task_data()
         tasks_scenarios.create_and_update_task(init_task_model, new_task_data)
 
+    @allure.title('Update full task with negative data')
     @allure.description(
         'Generates random task ID and to access it with update request, '
         'validate to receive expected error message and code')
@@ -89,12 +95,14 @@ class TestTasks:
             expected_status_code,
             error_model)
 
+    @allure.title('Delete task with positive data')
     @allure.description(
         'Create new task with generated data and delete it by ID, validate status code and that response body is empty')
     def test_delete_task_by_id(self, tasks_scenarios, task_data):
         test_model = task_data()
         tasks_scenarios.create_and_delete_task(test_model)
 
+    @allure.title('Delete task with negative data')
     @allure.description(
         'Generate random task ID and try to delete it without permission, '
         'validate that received error message and code equal to expected')

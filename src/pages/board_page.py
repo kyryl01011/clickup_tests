@@ -1,10 +1,9 @@
 import time
 
 import allure
-from playwright.sync_api import expect
 
+from src.enums.endpoints import Endpoints
 from src.pages.base_page import BasePage
-from src.utils.helpers import CLICKUP_TEAM_ID
 
 
 class BoardTasksTableFragment(BasePage):
@@ -31,7 +30,6 @@ class BoardTasksTableFragment(BasePage):
     @allure.description('Create new task in to-do list from board page')
     def create_new_task_in_todo_list(self, random_task_title):
         new_task_selector = f'a[data-test="board-task__name-link__{random_task_title}"]'
-        amount_of_tasks = self.amount_of_elements(self.TASKS_SELECTOR)
         self.click_button(self.NEW_TASK_BUTTON_SELECTOR)
         self.wait_selector_and_type(self.NEW_TASK_TITLE_INPUT_SELECTOR, random_task_title)
         self.click_button(self.CONFIRM_NEW_TASK_CREATION_SELECTOR)
@@ -46,9 +44,10 @@ class BoardTasksTableFragment(BasePage):
 @allure.feature('UI Board page actions')
 class BoardPage(BasePage):
 
+    _ENDPOINT = Endpoints.BOARD.value
+
     def __init__(self, page):
         super().__init__(page)
-        self._endpoint = f'/{CLICKUP_TEAM_ID}/v/b/t/{CLICKUP_TEAM_ID}'
         self.board_tasks_table = BoardTasksTableFragment(page)
 
     @allure.description('Open Board page')

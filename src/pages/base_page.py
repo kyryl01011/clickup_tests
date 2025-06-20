@@ -1,22 +1,24 @@
 import allure
 from playwright.sync_api import Page, expect
 
+from src.enums.url_components import UrlComponents
+
 
 @allure.feature('Base UI actions')
 class BasePage:
+    _BASE_URL: str = UrlComponents.CURRENT_UI_DOMAIN.value
+    _ENDPOINT: str = ''
 
     def __init__(self, page: Page):
         self.page = page
-        self.__base_url = 'https://app.clickup.com'
-        self._endpoint = ''
 
     @property
-    def _get_page_url(self):
-        return self.__base_url + self._endpoint
+    def _get_page_url(self) -> str:
+        return self._BASE_URL + self._ENDPOINT
 
     @_get_page_url.setter
     def _get_page_url(self, endpoint):
-        self._endpoint = endpoint
+        self._ENDPOINT = endpoint
 
     def get_by_locator(self, selector):
         with allure.step(f'Get element with selector "{selector}" by locator'):
