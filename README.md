@@ -17,9 +17,11 @@ To successfully run these automated tests on your local machine, please ensure y
   * **Node.js** and **npm** (required for Playwright Browser Drivers installation; Playwright CLI usually handles this, but Node.js is necessary)
   * **Allure Commandline** (for generating and viewing Allure Reports)
 
-## 🛠️ Installation and Setup
+-----
 
-Follow these step-by-step instructions to prepare your environment and install the necessary dependencies.
+## 🛠️ Installation and Setup (using `uv`)
+
+Follow these step-by-step instructions to prepare your environment and install the necessary dependencies using `uv`.
 
 ### 1\. Clone the Repository
 
@@ -30,48 +32,61 @@ git clone https://github.com/kyryl01011/clickup_tests.git
 cd clickup_tests
 ```
 
-### 2\. Create and Activate a Virtual Environment
+### 2\. Install `uv` (if not already installed)
 
-It is highly recommended to use a virtual environment to manage project dependencies and avoid conflicts with other Python projects.
-
-```bash
-python3 -m venv venv
-```
-
-After creating the virtual environment, activate it:
+`uv` is a fast Python package installer and resolver, which replaces `pip` and `venv`.
+To install `uv` globally, use the standalone installer:
 
   * **For macOS / Linux:**
     ```bash
-    source venv/bin/activate
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
-  * **For Windows (PowerShell):**
-    ```powershell
-    .\venv\Scripts\Activate.ps1
-    ```
-  * **For Windows (Command Prompt / CMD):**
-    ```cmd
-    .\venv\Scripts\activate.bat
-    ```
+  * **For Windows:** Refer to the official `uv` documentation for installation instructions (e.g., using `pipx install uv` or downloading a standalone executable).
 
-### 3\. Install Python Dependencies
+### 3\. Create Virtual Environment and Install Python Dependencies with `uv`
 
-Install all required Python libraries listed in the `requirements.txt` file:
+`uv` will automatically create a virtual environment (if one doesn't exist) and install all dependencies defined in your `pyproject.toml` (and locked in `uv.lock`) into it.
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
-### 4\. Install Playwright Browser Drivers
+This command will:
+
+  * Create a virtual environment (by default in `.venv`).
+  * Read the `uv.lock` file to ensure exact dependency versions are installed.
+  * Install all required Python libraries into the environment.
+
+### 4\. Activate the Virtual Environment (Optional, for direct usage in terminal)
+
+While `uv` allows running commands directly (e.g., `uv run pytest`), you might want to activate the environment for general terminal use.
+
+  * **For macOS / Linux:**
+    ```bash
+    source .venv/bin/activate
+    ```
+  * \*\*For Windows (PowerShell):
+    ```powershell
+    .venv\Scripts\Activate.ps1
+    ```
+  * \*\*For Windows (Command Prompt / CMD):
+    ```cmd
+    .venv\Scripts\activate.bat
+    ```
+
+### 5\. Install Playwright Browser Drivers
 
 Playwright needs to download and install browser drivers for Chromium, Firefox, and WebKit to execute UI tests.
 
 ```bash
-playwright install
+uv run playwright install
 ```
 
-### 5\. Install Allure Commandline
+*(Note: We use `uv run` here to ensure Playwright uses the Python environment managed by `uv`.)*
 
-To generate and view Allure Reports, you will need the Allure Commandline tool. If you don't have it installed, follow the instructions for your operating system:
+### 6\. Install Allure Commandline
+
+To generate and view Allure Reports, you will need the Allure Commandline tool.
 
   * **macOS (using Homebrew):**
     ```bash
@@ -81,34 +96,31 @@ To generate and view Allure Reports, you will need the Allure Commandline tool. 
     ```bash
     choco install allure
     ```
-  * **Linux:** Detailed instructions for various distributions can be found in the official Allure documentation: [Allure Docs](https://www.google.com/search?q=https://docs.qameta.io/allure/%23_install_a_commandline)
+  * **Linux:** Detailed instructions for various distributions can be found in the official Allure documentation.
 
-### 6\. Configure Environment Variables
+### 7\. Configure Environment Variables
 
 This project uses environment variables to store sensitive information (like API tokens) and configurable parameters.
 
 1.  **Create a `.env` file:** Copy the provided `env-copy` file and rename it to `.env` in the root directory of the project.
-
     ```bash
     cp env-copy .env
     ```
-
     *(For Windows CMD, use `copy env-copy .env`)*
-
 2.  **Edit the `.env` file:** Open the newly created `.env` file and fill in your specific credentials or configuration details according to the template provided inside.
-
       * **Crucially, you will need to obtain a ClickUp API Token.** Refer to the ClickUp API documentation for instructions on how to generate one.
 
 ## 🚀 Running Tests
 
 Once the installation and setup are complete, you are ready to run the tests.
+Use `uv run` to execute Pytest commands within the virtual environment without needing to activate it manually.
 
 ### Run All Tests (UI and API) and Generate Allure Report
 
 This command will execute all tests (both UI and API) discovered by Pytest and save the Allure results to the `allure-results/` directory.
 
 ```bash
-python -m pytest --alluredir=allure-results
+uv run pytest --alluredir=allure-results
 ```
 
 ### Running Specific Test Types (Optional)
@@ -117,15 +129,15 @@ You can use Pytest markers to run specific subsets of tests, if they are defined
 
   * **Run only API tests:**
     ```bash
-    pytest -m api --alluredir=allure-results
+    uv run pytest -m api --alluredir=allure-results
     ```
   * **Run only UI tests:**
     ```bash
-    pytest -m ui --alluredir=allure-results
+    uv run pytest -m ui --alluredir=allure-results
     ```
   * **Run tests in headless UI mode (without opening browser UI):**
     ```bash
-    pytest --headed=false # If your Playwright config runs headed by default
+    uv run pytest --headed=false
     ```
     *(Note: Playwright tests run in headless mode by default unless configured otherwise. You might need to adjust your `playwright.config.js` or command-line options for headed runs.)*
 
@@ -156,5 +168,3 @@ allure open allure-report
 
 For a detailed understanding of the API functionality tested by this project, you can refer to the official ClickUp API documentation:
 [https://developer.clickup.com/reference/](https://developer.clickup.com/reference/)
-
------
