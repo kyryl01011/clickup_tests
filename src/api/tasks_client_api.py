@@ -3,7 +3,6 @@ from requests import Response
 
 from src.custom_requester.custom_requester import CustomRequester
 from src.enums.endpoints import Endpoints
-from src.utils.helpers import CLICKUP_LIST_ID
 
 
 class TasksApi(CustomRequester):
@@ -11,12 +10,6 @@ class TasksApi(CustomRequester):
     def get_task(self, task_id) -> Response:
         with allure.step(f'Fetch task object by ID: {task_id}'):
             response = self.send_request('GET', f'{Endpoints.TASK.value}/{task_id}')
-            return response
-
-    @allure.description(f'Fetch all tasks in list: {CLICKUP_LIST_ID}')
-    def get_all_tasks(self) -> Response:
-        with allure.step(f'Fetch all tasks in list: {CLICKUP_LIST_ID}'):
-            response = self.send_request('GET', Endpoints.LIST_TASK.value)
             return response
 
     def create_new_task(self, body_json) -> Response:

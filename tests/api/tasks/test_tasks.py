@@ -3,7 +3,6 @@ import pytest
 
 from src.data_models.errors import BasicErrorModel
 from src.utils.data_generator import DataGenerator
-from tests.conftest import task_data
 
 
 @allure.title('Manage tasks API')

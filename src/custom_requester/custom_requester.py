@@ -2,7 +2,6 @@ import allure
 from pydantic import BaseModel
 from requests import Session
 
-from src.enums.consts import BASE_URL
 from src.enums.url_components import UrlComponents
 
 
