@@ -4,7 +4,7 @@ import requests
 
 from src.api.api_manager import ApiManager
 from src.data_models.tasks import CreatedTaskModel
-from src.enums.consts import BASE_HEADERS
+from src.consts.request_components import BASE_HEADERS
 from src.scenarios.tasks.tasks import TasksScenarios
 from src.utils.data_generator import DataGenerator
 
