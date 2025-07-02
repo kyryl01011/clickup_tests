@@ -4,7 +4,7 @@ import requests
 
 from src.api.api_manager import ApiManager
 from src.data_models.tasks import CreatedTaskModel
-from src.consts.request_components import BASE_HEADERS
+from src.enums.request_components import RequestComponents
 from src.scenarios.tasks.tasks import TasksScenarios
 from src.utils.data_generator import DataGenerator
 
@@ -13,8 +13,8 @@ from src.utils.data_generator import DataGenerator
 @pytest.fixture(scope='session')
 def session():
     new_session = requests.Session()
-    new_session.headers.update(BASE_HEADERS)
-    allure.attach(str(BASE_HEADERS), name='Auth session headers', attachment_type=allure.attachment_type.JSON)
+    new_session.headers.update(RequestComponents.BASE_HEADERS.value)
+    allure.attach(str(RequestComponents.BASE_HEADERS.value), name='Auth session headers', attachment_type=allure.attachment_type.JSON)
 
     yield new_session
 
